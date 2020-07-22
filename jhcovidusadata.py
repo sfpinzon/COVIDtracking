@@ -163,12 +163,6 @@ df4 = df4.reset_index(drop=True)
 
 #######
  
-def  coldiff(data,interval=1):
-    cols= np.arange(6,len(df4.columns)-1,1)
-    a=df4.iloc[:,5]-df4.iloc[:,4]
-    for i in cols:
-        d=df4.iloc[:,i]-df4.iloc[:,i-interval]
-        a=a.concat()
 
 import datetime
 import xlsxwriter
