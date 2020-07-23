@@ -77,13 +77,13 @@ dfgdeaths.insert(1,'State',"")
 gcasesxl = dfgcases[dfgcases.Country == 'US']
 gcasesxl = gcasesxl.append(statecases[statecases.State == 'Texas'])
 gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Bexar'])
-gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Harris'])
-gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Dallas'])
+gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Harris'][dfuscases.State == 'Texas'])
+gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Dallas'][dfuscases.State == 'Texas'])
 gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Tarrant'])
 gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Travis'])
 gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Collin'])
-gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Hidalgo'])
-gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'El Paso'])
+gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'Hidalgo'][dfuscases.State == 'Texas'])
+gcasesxl = gcasesxl.append(dfuscases[dfuscases.Admin2 == 'El Paso'][dfuscases.State == 'Texas'])
 gcasesxl = gcasesxl.append(statecases[statecases.State.isin(int_states2)])
 gcasesxl = gcasesxl.append(dfgcases[dfgcases.Country == 'China'])
 gcasesxl = gcasesxl.append(dfgcases[dfgcases.Country == 'Belgium'])
@@ -124,13 +124,13 @@ gcasesxl = gcasesxl.reset_index(drop=True)
 gdeathsxl = dfgdeaths[dfgdeaths.Country == 'US']
 gdeathsxl = gdeathsxl.append(statedeaths[statedeaths.State == 'Texas'])
 gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Bexar'])
-gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Harris'])
-gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Dallas'])
+gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Harris'][dfusdeaths.State == 'Texas'])
+gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Dallas'][dfusdeaths.State == 'Texas'])
 gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Tarrant'])
 gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Travis'])
 gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Collin'])
-gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Hidalgo'])
-gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'El Paso'])
+gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'Hidalgo'][dfusdeaths.State == 'Texas'])
+gdeathsxl = gdeathsxl.append(dfusdeaths[dfusdeaths.Admin2 == 'El Paso'][dfusdeaths.State == 'Texas'])
 gdeathsxl = gdeathsxl.append(statedeaths[statedeaths.State.isin(int_states2)])
 gdeathsxl = gdeathsxl.append(dfgdeaths[dfgdeaths.Country == 'China'])
 gdeathsxl = gdeathsxl.append(dfgdeaths[dfgdeaths.Country == 'Belgium'])
@@ -168,8 +168,27 @@ gdeathsxl = gdeathsxl.drop('Population', axis=1)
 gdeathsxl = gdeathsxl.reset_index(drop=True)
 
 
+Locations =  pd.series(['US','Texas','Bexar','Harris','Dallas','Tarrant','Travis','Collin','Hidalgo','El Paso','Alabama',
+                        'Arizona','California','Colorado','Conneticut','Florida','Georgia','Louisiana','Massachusetts',
+                        'Nevada','New Mexico','New York','Oklahoma','South Carolina','Washington','China','Belgium',
+                        'Canada','France','Germany','Italy','Japan','Korea, South','Netherlands','Norway','Portugal',
+                        'Spain','Sweden','Switzerland','United Kingdom','Egypt','South Africa','India','Indonesia',
+                        'Iran','Philippines','Saudi Arabia','Singapore','Thailand','Poland','Russia','Turkey','Brazil',
+                        'Chile','Colombia','Mexico','Peru'])
+gcasesxl.loc[:,'Admin2'] = Locations
+gdeathsxl.loc[:,'Admin2'] =  Locations
+gcasesxl = gcasesxl.drop(['State','Country'],axis=1)
+gdeathsxl = gdeathsxl.drop(['State','Country'],axis=1)
+
+a  = gcasesxl.melt(id_vars='Admin2')
 
 import xlsxwriter
+
+writer = pd.ExcelWriter('covid_tableau_.xlsx', engine='xlsxwriter')    
+a.to_excel(writer, sheet_name='Cumulative_Cases')
+workbook = writer.book
+
+writer.save()
 
 writer = pd.ExcelWriter('new_covid_data_.xlsx', engine='xlsxwriter')    
 gcasesxl.to_excel(writer, sheet_name='Cumulative_Cases')
